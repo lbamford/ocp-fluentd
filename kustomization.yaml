@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1 
+kind: Kustomization 
+commonLabels: 
+   app: fluent-forwarder
+resources: 
+   - ./01-fluentd-pvc.yaml 
+   - ./02-fluentd-cm.yaml 
+   - ./03-fluentd-deploy.yaml 
+   - ./04-fluentd-service.yaml 
+   - ./05-nginx-cm.yaml 
+   - ./06-nginx-deploy.yaml 
+   - ./07-nginx-service.yaml 
