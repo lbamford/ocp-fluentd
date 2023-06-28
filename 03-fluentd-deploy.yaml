@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentd-forward
+  labels:
+    log-app: fluentd-forward
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fluentd-forward
+  template:
+    metadata:
+      labels:
+        app: fluentd-forward
+    spec:
+      containers:
+      - image: quay.io/spiro-redhat/fluentd:1.16
+        imagePullPolicy: IfNotPresent
+        name: fluentd-forward
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 100m 
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: fluentd-forward-config
+          mountPath: /fluentd/etc/
+        - name: fluentd-forward-logs
+          mountPath: /logs/
+      volumes:
+      - name: fluentd-forward-config
+        configMap:
+          name: fluentd-forward-config
+      - name: fluentd-forward-logs
+        persistentVolumeClaim:
+          claimName: fluentd-forward-pvc
+          
+      

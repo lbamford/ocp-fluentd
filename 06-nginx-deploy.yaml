@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-logview
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-logview
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nginx-logview
+    spec:
+      containers:
+      - image: nginxinc/nginx-unprivileged:latest
+        name: nginx-logview
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "1m"
+          limits: 
+            memory: "64Mi"
+            cpu: "10m"
+        ports:
+        - containerPort: 8080
+          name: nginx-logview
+        volumeMounts:
+          - name: config-vol
+            readOnly: true
+            mountPath: /etc/nginx/
+          - name: fluentd-forward-logs
+            readOnly: true
+            mountPath: /logs/
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health 
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 3
+      volumes:
+        - name: fluentd-forward-logs
+          persistentVolumeClaim:
+            claimName: fluentd-forward-pvc
+        - name: config-vol
+          configMap:
+            name: nginx-config
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+              

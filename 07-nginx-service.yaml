@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-logview
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: nginx-logview
+  type: LoadBalancer
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nginx-logview
+spec:
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: nginx-logview
