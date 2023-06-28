@@ -16,7 +16,7 @@ data:
       body_size_limit 32m 
       keep_alive_timeout 10s 
     </source>
-    <filter **>
+    <filter app.log>
       @type parser
       key_name message
       <parse> 
@@ -24,9 +24,9 @@ data:
       </parse>
     </filter>
    
-    <match **>
+    <match app.log>
       @type file
-      path /logs/**
+      path /logs/app-%Y-%m-%d.log
       append true
       <format>
         @type json
