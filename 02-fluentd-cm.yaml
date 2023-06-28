@@ -26,7 +26,7 @@ data:
    
     <match app.log>
       @type file
-      path /logs/app-%Y-%m-%d.log
+      path /logs/app-%Y-%m-%d
       append true
       <format>
         @type json
